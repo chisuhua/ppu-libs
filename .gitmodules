@@ -1,0 +1,3 @@
+[submodule "libclc/libclc"]
+	path = libclc/libclc
+	url = git@github.com:chisuhua/libclc.git
