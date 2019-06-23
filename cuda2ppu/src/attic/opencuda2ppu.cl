@@ -1,31 +1,9 @@
+#include "ppu_builtin_define.h"
 
-typedef enum {
-      GLOBAL_ID = 0,
-      GROUP_ID,
-      GLOBAL_ID_X,
-      GLOBAL_ID_Y,
-      GLOBAL_ID_Z,
-      TID_X,
-      TID_Y,
-      TID_Z,
-      TID_W,
-      NTID_X,
-      NTID_Y,
-      NTID_Z,
-      NTID_W,
-      CTAID_X,
-      CTAID_Y,
-      CTAID_Z,
-      CTAID_W,
-      NCTAID_X,
-      NCTAID_Y,
-      NCTAID_Z,
-      NCTAID_W,
-      WARP_SIZE,
-      /* add register definitions here */
-      MAX_REG_ID
-}global_register_id;
+#define __x86_64__ 1
+#include "aco_device.h"
 
+/*
 __global int *g_global_memory = 0;
 
 void init_global_memory(__global int *in)
@@ -38,9 +16,19 @@ int read_register(int reg_id)
    if (reg_id >= MAX_REG_ID) return 0;
    return g_global_memory[reg_id];
 }
+*/
 
-int get_global_id(int a)
+extern int __builtin_read_register(aco_ctx_t* co, int reg_id);
+
+// it is cpu version of builtin
+int read_register(int reg_id)
 {
+    // the llvm pass will hack this function to pass co throught argument
+    aco_ctx_t* co;
+    return __builtin_read_register(co, reg_id);
+}
+
+int get_global_id(int a) {
     return read_register(GLOBAL_ID);
 }
 

@@ -31,6 +31,7 @@ project(${libname})
 
 file(GLOB ll_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.ll")
 file(GLOB ocl_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cl")
+file(GLOB builtin_sources "${CMAKE_CURRENT_SOURCE_DIR}/src/*.o")
 
 #  OpenCL files are no longer gfx specific, so only build them one time
 set(cl_cmd ${LLVM_COMPILER}/bin/clang
@@ -58,6 +59,19 @@ foreach(file ${ocl_sources})
   list(APPEND cl_ll_files ${ll_filename})
 endforeach()
 
+
+set(builtin_files)
+foreach(file ${builtin_sources})
+  file(RELATIVE_PATH rfile ${CMAKE_CURRENT_SOURCE_DIR}/src ${file})
+  get_filename_component(fname ${rfile} NAME)
+  add_custom_command(
+    OUTPUT ${fname}
+    COMMAND cp ${file} ${fname}
+  )
+  list(APPEND builtin_files ${fname})
+endforeach()
+
+
 #Link all llfiles from cl and ll files
 add_custom_command(
     OUTPUT linkout.bc
@@ -80,8 +94,11 @@ add_custom_command(
     OUTPUT ${final_bc_filename}
     COMMAND ${LLVM_COMPILER}/bin/prepare-builtins linkout.bc -o ${final_bc_filename}
     DEPENDS linkout.bc )
-add_custom_target(${libname} ALL DEPENDS ${final_bc_filename} ${cuda2ppu_bc_filename})
-
+add_custom_target(${libname} ALL DEPENDS ${final_bc_filename} ${cuda2ppu_bc_filename} ${builtin_files})
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${final_bc_filename} DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${cuda2ppu_bc_filename} DESTINATION lib)
+
+foreach(file ${builtin_files})
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION lib)
+endforeach()
