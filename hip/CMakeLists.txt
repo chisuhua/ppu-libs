@@ -69,8 +69,10 @@ set(hip_bc_files)
 #  Compile all .cpp files in HIP automode
 # Consider adding -fcuda-rdc 
 # set(hip_auto_cmd ${LLVM_COMPILER}/bin/clang++ -c -emit-llvm --hip-auto-headers=cuda_open 
+# TODO I add --hip-device-lib=dummy.amdgc.bc --hip-device-lib-path is because clang 10.0 will auto choose hip device lib if bclib is not specified  
 set(hip_auto_cmd ${LLVM_COMPILER}/bin/clang++ -c -emit-llvm --hip-auto-headers=cuda_open -x cuda
     --cuda-device-only --offload-arch=${mcpu} -O2 
+    --hip-device-lib=dummy.amdgcn.bc --hip-device-lib-path=${CMAKE_CURRENT_SOURCE_DIR}/src
     -I${CMAKE_CURRENT_SOURCE_DIR}/../include 
     -I${CMAKE_CURRENT_SOURCE_DIR}/src)
 foreach(file ${hip_auto_sources})
@@ -84,8 +86,10 @@ foreach(file ${hip_auto_sources})
     list(APPEND hip_bc_files ${bc_filename})
 endforeach()
 
+# TODO I add --hip-device-lib=dummy.amdgc.bc --hip-device-lib-path is because clang 10.0 will auto choose hip device lib if bclib is not specified  
 set(hip_cmd ${LLVM_COMPILER}/bin/clang++ -c -emit-llvm -x hip
     --cuda-device-only --offload-arch=${mcpu} -O2 
+    --hip-device-lib=dummy.amdgcn.bc --hip-device-lib-path=${CMAKE_CURRENT_SOURCE_DIR}/src
     -I${CMAKE_CURRENT_SOURCE_DIR}/../include 
     -I${CMAKE_CURRENT_SOURCE_DIR}/src)
 foreach(file ${hip_sources})
