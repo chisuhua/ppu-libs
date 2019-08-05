@@ -41,11 +41,15 @@ set(AMDGCN_LIB_LIST)
 set(AMDGCN_DEP_LIST)
 add_subdirectory(hip)
 add_subdirectory(libclc)
-add_subdirectory(irif)
 
-add_subdirectory(oclc)
-add_subdirectory(ocml)
-add_subdirectory(ockl)
+
+# FIXME irif comile failed with clang 10
+#       that cause other compoent can't be compiled
+#add_subdirectory(irif)
+
+#add_subdirectory(oclc)
+#add_subdirectory(ocml)
+#add_subdirectory(ockl)
 #add_subdirectory(opencl)
 
 option(BUILD_CUDA2GCN "Build CUDA2GCN needed for HIP Automatic Mode" OFF)
@@ -53,16 +57,16 @@ option(BUILD_CUDA2PPU "Build CUDA2PPU needed for HIP Automatic Mode" ON)
 
 if(BUILD_CUDA2GCN)
   add_subdirectory(cuda2gcn)
-  add_subdirectory(cudamath)
+  #  add_subdirectory(cudamath)
 endif(BUILD_CUDA2GCN)
 
 if(BUILD_CUDA2PPU)
   add_subdirectory(cuda2ppu)
-  add_subdirectory(cudamath)
+  # add_subdirectory(cudamath)
 endif(BUILD_CUDA2PPU)
 
 if(BUILD_HC_LIB)
-  add_subdirectory(hc)
+  # add_subdirectory(hc)
 endif()
 
 if(AMDGCN_TARGETS_LIB_LIST)
